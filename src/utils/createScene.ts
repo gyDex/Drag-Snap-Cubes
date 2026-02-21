@@ -3,6 +3,7 @@ import { randomInterval } from "./randomIntFromInterval";
 
 import * as THREE from 'three'
 import { colors } from "../components/PanelColors/data/colors";
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 interface CreateSceneResult {
     scene: Scene;
@@ -10,16 +11,19 @@ interface CreateSceneResult {
     perspectiveCamera: PerspectiveCamera;
     orthoCamera: OrthographicCamera;
     cubes: { mesh: Mesh; velocity: Vector3 }[];
+    controls : OrbitControls
 }
 
 export function createScene(
-    mountRef: React.RefObject<HTMLDivElement>,
+    mountRef: React.RefObject<HTMLDivElement>,  
     PLATFORM_SIZE: number,
     CUBE_SIZE: number,
     minX: number,
     maxX: number,
     minZ: number,
-    maxZ: number
+    maxZ: number,
+    controlsRef: React.RefObject<any>,
+    canControlCamera: React.RefObject<any>,
 ): CreateSceneResult {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#dee5ed');
@@ -52,6 +56,17 @@ export function createScene(
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current?.appendChild(renderer.domElement);
 
+    const controls = new OrbitControls(perspectiveCamera, renderer.domElement);
+    controls.enableDamping = true; 
+    controls.dampingFactor = 0.05;
+    controls.screenSpacePanning = false;
+    controls.minDistance = 100;   
+    controls.maxDistance = 1400; 
+    controls.maxPolarAngle = Math.PI / 2;
+
+    controlsRef.current = controls;
+    controlsRef.current.enabled = canControlCamera.current;
+
     // Свет
     scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -62,7 +77,7 @@ export function createScene(
     const platformGeometry = new THREE.BoxGeometry(PLATFORM_SIZE, 2, PLATFORM_SIZE);
     const platformMaterial = new THREE.MeshBasicMaterial({ color: '#dee5ed' });
     const groundMesh = new THREE.Mesh(platformGeometry, platformMaterial);
-    groundMesh.position.y = -5;
+    groundMesh.position.y = -2;
     scene.add(groundMesh);
 
     const platformEdges = new THREE.EdgesGeometry(platformGeometry);
@@ -118,5 +133,5 @@ export function createScene(
         cubes.push({ mesh, velocity: new THREE.Vector3(0, 0, 0) });
     }
 
-    return { scene, renderer, perspectiveCamera, orthoCamera, cubes };
+    return { scene, renderer, perspectiveCamera, orthoCamera, cubes, controls  };
 }

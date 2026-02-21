@@ -9,7 +9,7 @@ import { CameraProvider } from './providers/CameraContext';
 
 const App: React.FC = () => {
   const [isSticking, setSticking] = useState(false);
-  const explodeRef = useRef<() => void>(() => {}); // вот он! хранит актуальный explode
+  const explodeRef = useRef<() => void>(() => {});
 
   return (
     <CubeActionsProvider

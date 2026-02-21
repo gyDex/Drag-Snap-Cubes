@@ -12,6 +12,7 @@ interface PointerDownParams {
   getCamera: () => THREE.Camera;
   mouse: THREE.Vector2;
   isDraggingRef: React.MutableRefObject<any>;
+  setSelectedCube: (value: any) => void,
 }
 
 export const handlePointerDown = ({
@@ -24,20 +25,18 @@ export const handlePointerDown = ({
   getCamera,
   mouse,
   isDraggingRef,
+  setSelectedCube
 }: PointerDownParams) => {
   if (!mountRef.current) return;
 
-  // сброс цвета предыдущего куба
   if (selectedCubeRef.current) {
     selectedCubeRef.current.mesh.material.color.set(colorCube);
   }
 
   mountRef.current.style.cursor = 'default';
 
-  // только левая кнопка мыши
   if ('button' in e && e.button !== 0) return;
 
-  // координаты pointer
   const rect = mountRef.current.getBoundingClientRect();
 
   let clientX: number;
@@ -71,11 +70,11 @@ export const handlePointerDown = ({
     return;
   }
 
-  // 🔥 включаем drag
   selectedCubeRef.current = hit;
   isDraggingRef.current = true;
 
-  // скрываем dashed линии у всех
+  setSelectedCube(hit);
+
   cubes.forEach(c => {
     if (c.mesh.dashedLine) c.mesh.dashedLine.visible = false;
     if (c.mesh.line) c.mesh.line.visible = true;
@@ -83,14 +82,12 @@ export const handlePointerDown = ({
 
   const mesh = hit.mesh;
 
-  // показываем dashed линию у выбранного
   if (mesh.dashedLine) {
     mesh.dashedLine.visible = true;
     mesh.dashedLine.computeLineDistances();
   }
   if (mesh.line) mesh.line.visible = false;
 
-  // логика snap
   if (snappedRef.current) {
     const { a, b } = snappedRef.current;
     if (selectedCubeRef.current === b) {

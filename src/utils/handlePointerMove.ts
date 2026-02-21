@@ -1,6 +1,4 @@
-// utils/onPointerMove.ts
 import * as THREE from 'three';
-import { AnimateSceneParams } from './animateScene';
 
 interface OnPointerMoveParams {
   e: MouseEvent | TouchEvent;

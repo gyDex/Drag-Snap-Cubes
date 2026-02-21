@@ -1,5 +1,6 @@
 import { Camera, PerspectiveCamera, OrthographicCamera, WebGLRenderer, Scene, Vector3 } from 'three';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export interface AnimateSceneParams {
   renderer: WebGLRenderer;
@@ -12,6 +13,9 @@ export interface AnimateSceneParams {
   isAnimating: React.MutableRefObject<boolean>;
   cubes: any[];
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  controls: OrbitControls,
+  controlsRef: any,
+  space: string,
 }
 
 export const animateScene = (params: AnimateSceneParams): void => {
@@ -23,22 +27,29 @@ export const animateScene = (params: AnimateSceneParams): void => {
   const animate = () => {
     requestAnimationFrame(animate);
 
-    if (isAnimating.current && perspectiveCameraRef.current) {
-      const camera = perspectiveCameraRef.current;
-      camera.position.lerp(targetPos.current, 0.15);
-      camera.lookAt(0, 0, 0);
+    params.controls.update(); 
 
-      if (camera.position.distanceTo(targetPos.current) < 1) {
+    if (isAnimating.current) {
+    const camera = perspectiveCameraRef.current!;
+    camera.position.lerp(targetPos.current, 0.15);
+    camera.lookAt(0, 0, 0);
+
+    if (camera.position.distanceTo(targetPos.current) < 1) {
         isAnimating.current = false;
 
-        if (switchToOrtho.current && orthoCameraRef.current) {
-          const ortho = orthoCameraRef.current;
-          ortho.position.copy(camera.position);
-          ortho.lookAt(0, 0, 0);
-          cameraRef.current = ortho;
+        if (switchToOrtho.current) {
+            if (orthoCameraRef.current) cameraRef.current = orthoCameraRef.current;
+            params.controlsRef.current!.object = cameraRef.current;
+            params.controlsRef.current!.enabled = false;
+            params.controlsRef.current!.update();
+        } else {
+            if (perspectiveCameraRef.current) cameraRef.current = perspectiveCameraRef.current;
+            params.controlsRef.current!.object = cameraRef.current;
+            params.controlsRef.current!.enabled = true;
+            params.controlsRef.current!.update();
         }
-      }
     }
+}
 
     cubes.forEach(c => {
       c.mesh.position.add(c.velocity);

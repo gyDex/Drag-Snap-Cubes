@@ -9,6 +9,7 @@ import { handlePointerDown } from './utils/handlePointerDown';
 import { handlePointerMove } from './utils/handlePointerMove';
 import { createScene } from './utils/createScene';
 import { BOUNDS, CUBE_SIZE, PLATFORM_SIZE, SNAP_DISTANCE } from './data/SceneConstants';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 interface SceneProps {
   explodeRef: any;
@@ -17,6 +18,8 @@ interface SceneProps {
 export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
     const mountRef = useRef<any>(null);
     const isDraggingRef = useRef(false);
+
+    const [selectedCube, setSelectedCube] = React.useState<any | null>(null);
 
     const snappedRef = useRef<{ a: any; b: any, offsetX: any, offsetZ: any } | null>(null);
 
@@ -37,6 +40,19 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
     const targetPos = useRef(new THREE.Vector3());
 
     const switchToOrtho = useRef(false);
+
+    const controlsRef = useRef<OrbitControls | null>(null);
+    const canControlCamera = useRef(true);
+
+    useEffect(() => {
+        if (!controlsRef.current) return;
+
+        if (selectedCube) {
+            controlsRef.current.enabled = false;
+        } else {
+            controlsRef.current.enabled = true;
+        }
+    }, [selectedCube]);
     
     useEffect(() => {
         if (selectedCubeRef.current) {
@@ -49,7 +65,7 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
             selectedCubeRef.current.mesh.material.color.set(colorCube);
         }
     }, [colorCube]);
-
+    
     useEffect(() => {
         if (!perspectiveCameraRef.current || !orthoCameraRef.current) return;
 
@@ -59,21 +75,22 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
             targetPos.current.set(0, 800, 0.001);
             switchToOrtho.current = true;
         } else {
-            cameraRef.current = perspectiveCameraRef.current;
             targetPos.current.set(0, 600, 600);
             switchToOrtho.current = false;
         }
     }, [space]);
 
     useEffect(() => {
-        const { scene, renderer, perspectiveCamera, orthoCamera, cubes } = createScene(
+        const { scene, renderer, perspectiveCamera, orthoCamera, cubes, controls } = createScene(
             mountRef,
             PLATFORM_SIZE,
             CUBE_SIZE,
             BOUNDS.minX,
             BOUNDS.maxX,
             BOUNDS.minZ,
-            BOUNDS.maxZ
+            BOUNDS.maxZ,
+            controlsRef,
+            canControlCamera
         );
 
         orthoCamera.position.set(0, 800, 0.001);
@@ -99,9 +116,10 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
                 const mesh = selectedCubeRef.current.mesh;
                 if ((mesh as any).dashedLine) (mesh as any).dashedLine.visible = false;
                 if ((mesh as any).line) (mesh as any).line.visible = true;
+
+                setSelectedCube(null); 
             }
             if (mountRef.current) mountRef.current.style.cursor = 'default';
-            if (e.button !== 0) return;
         };
 
         explodeRef.current = () => explodeCubes(snappedRef, setSticking, space);
@@ -117,11 +135,15 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
             isAnimating,
             cubes,
             bounds: {minX : BOUNDS.minX, maxX: BOUNDS.maxX, minZ: BOUNDS.minZ, maxZ: BOUNDS.maxZ },
+            controls: controls,
+            controlsRef,
+            space
         };
 
         animateScene(params);
 
         const handleMouseDown = (e: MouseEvent) =>
+        {
             handlePointerDown({
                 e,
                 selectedCubeRef,
@@ -131,10 +153,12 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
                 snappedRef,
                 getCamera,
                 mouse,
-                isDraggingRef
-        });
+                isDraggingRef,
+                setSelectedCube
+            });
+        }
 
-        const handleTouchStart = (e: TouchEvent) =>
+        const handleTouchStart = (e: TouchEvent) => {
             handlePointerDown({
                 e,
                 selectedCubeRef,
@@ -144,8 +168,10 @@ export const Scene: React.FC<SceneProps> = ({ explodeRef }) => {
                 snappedRef,
                 getCamera,
                 mouse,
-                isDraggingRef
-        });
+                isDraggingRef,
+                setSelectedCube
+            });
+        }    
 
         window.addEventListener('mousedown', handleMouseDown);
 
