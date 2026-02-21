@@ -1,64 +1,62 @@
 # 🟦 Drag & Snap Cubes 🟦
 
-**🎮 Интерактивное веб-приложение с перетаскиваемыми кубиками на площадке**
+**🎮 Interactive web application with draggable cubes on a playground**
 
-## 📝 Описание
+## 📝 Description
 
-Это тестовое приложение для демонстрации навыков Frontend-разработки.
-Пользователь может взаимодействовать с кубиками на площадке, используя функции:
+This is a test application demonstrating Frontend development skills. Users can interact with cubes on the playground using the following features:
 
-* 🖱️ Перетаскивание кубиков по осям X и Y с ограничением перемещения в пределах площадки.
-* 🎨 Выбор кубика и изменение его цвета (2–3 варианта).
-* 🧲 Прилипание кубиков при приближении и совместное перемещение прилипших кубиков.
-* 💥 Разъединение кубиков с разлетанием в разные стороны.
+* 🖱️ Drag cubes along X and Y axes with movement limited to the playground.
+* 🎨 Select a cube and change its color (2–3 options).
+* 🧲 Cubes snap together when close and move together.
+* 💥 Separate cubes with a random scatter.
 
-## 🛠️ Стек технологий
+## 🛠️ Tech Stack
 
 * **React 19** + **TypeScript**
-* **Webpack 5** для сборки и dev-сервера
-* **SASS / CSS** для стилей
-* **Three.js** для визуализации кубиков
-* **Cannon-es** для физики и столкновений
+* **Webpack 5** for build and dev server
+* **SASS / CSS** for styles
+* **Three.js** for cube visualization
+* **Cannon-es** for physics and collisions
 
-## ⚡ Установка и запуск
+## ⚡ Installation & Run
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 
 ```bash
-git clone <URL вашего репозитория>
-cd <название папки>
+git clone <repository-URL>
+cd <folder-name>
 ```
 
-2. Установите зависимости:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Запустите dev-сервер:
+3. Start dev server:
 
 ```bash
 npm start
 ```
 
-Приложение откроется на [http://localhost:3000](http://localhost:3000)
-
-4. Для сборки production версии:
+The app will open at [http://localhost:3000](http://localhost:3000)
+4. Build production version:
 
 ```bash
 npm run build
 ```
 
-Сборка появится в папке `dist`.
+The build will be in the `dist` folder.
 
-## 🎯 Функционал
+## 🎯 Features
 
-* 🖱️ Перетаскивание кубиков в пределах площадки
-* 🎨 Выбор кубика и изменение цвета
-* 🧲 «Прилипание» кубиков при сближении
-* 🤝 Совместное перемещение прилипших кубиков
-* 💥 Кнопка «Разъединить» для случайного разлета кубиков
+* 🖱️ Drag cubes within the playground
+* 🎨 Select cube and change color
+* 🧲 Cubes snap when close
+* 🤝 Snap cubes move together
+* 💥 Separate button for random scattering
 
-## 🎯 Цель проекта
+## 🎯 Project Goal
 
-Демонстрация навыков работы с интерактивными элементами, логикой перетаскивания и физическим взаимодействием объектов на веб-странице.
+Demonstrating skills in interactive elements, drag logic, and physical interactions on a web page.
