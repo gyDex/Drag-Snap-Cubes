@@ -1,0 +1,22 @@
+.panel-colors {
+    position: relative;
+    background-color: #fefefe;
+    z-index: 100;
+
+    padding: 30px 40px;
+    border: 1px solid #d5dee7;
+
+    &__title {
+        color: #34393e;
+        width: 100%;
+        display: flex;
+        font-weight: 700;
+        justify-content: center;
+    }
+
+    &__items {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+}
