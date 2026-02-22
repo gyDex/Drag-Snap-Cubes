@@ -17,7 +17,6 @@ This is a test application demonstrating Frontend development skills. Users can 
 * **Webpack 5** for build and dev server
 * **SASS / CSS** for styles
 * **Three.js** for cube visualization
-* **Cannon-es** for physics and collisions
 
 ## ⚡ Installation & Run
 
